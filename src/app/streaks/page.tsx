@@ -4,31 +4,19 @@
 import React, { useState, useEffect } from 'react';
 import { Flame, Star, Award, CheckCircle, CalendarDays, Shapes } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Event } from '@/lib/types';
-import { isSameDay, subDays, startOfToday } from 'date-fns';
+import { isSameDay, subDays, startOfToday, differenceInCalendarDays } from 'date-fns';
 import { Toaster } from '@/components/ui/toaster';
-
-// We'll reuse the dummy data logic for consistency, but in a real app, this would come from a data store.
-const today = startOfToday();
-const startOfThisWeek = startOfToday();
-
-const dummyEvents: Event[] = [
-  // A sample of completed events to calculate streak
-  { id: 's1', title: 'Calculus II', start: subDays(today, 1), end: subDays(today, 1), category: 'study', completed: true },
-  { id: 's2', title: 'Gym Session', start: subDays(today, 2), end: subDays(today, 2), category: 'personal', completed: true },
-  { id: 's3', title: 'Group Project', start: subDays(today, 4), end: subDays(today, 4), category: 'work', completed: true },
-  { id: 's4', title: 'Morning Workout', start: subDays(today, 5), end: subDays(today, 5), category: 'personal', completed: true },
-  { id: 's5', title: 'Read a book', start: subDays(today, 6), end: subDays(today, 6), category: 'personal', completed: true },
-];
-
+import { useEvents } from '@/hooks/use-events';
 
 const calculateStreak = (events: Event[]): number => {
+    if (!events || events.length === 0) return 0;
+    
     let streak = 0;
-    let currentDate = today;
+    let currentDate = startOfToday();
     const completedEventDays = new Set(
         events.filter(e => e.completed).map(e => e.start.toDateString())
     );
@@ -53,6 +41,32 @@ const calculateStreak = (events: Event[]): number => {
     return streak;
 };
 
+const calculateLongestStreak = (events: Event[]): number => {
+    if (!events || events.length === 0) return 0;
+
+    const completedDates = events
+        .filter(e => e.completed)
+        .map(e => startOfToday.apply(e.start))
+        .sort((a, b) => b.getTime() - a.getTime());
+
+    if (completedDates.length === 0) return 0;
+    
+    let longestStreak = 0;
+    let currentStreak = 1;
+
+    for (let i = 0; i < completedDates.length -1; i++) {
+        const diff = differenceInCalendarDays(completedDates[i], completedDates[i + 1]);
+        if (diff === 1) {
+            currentStreak++;
+        } else if (diff > 1) {
+            longestStreak = Math.max(longestStreak, currentStreak);
+            currentStreak = 1;
+        }
+    }
+
+    return Math.max(longestStreak, currentStreak);
+};
+
 
 const motivationalMessages = [
     "On fire! Keep up the great work.",
@@ -63,16 +77,27 @@ const motivationalMessages = [
 ];
 
 export default function StreaksPage() {
+    const { events } = useEvents();
     const [streak, setStreak] = useState(0);
+    const [longestStreak, setLongestStreak] = useState(0);
+    const [totalCompleted, setTotalCompleted] = useState(0);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        const currentStreak = calculateStreak(dummyEvents);
+        const currentStreak = calculateStreak(events);
+        const longest = calculateLongestStreak(events);
+        const completed = events.filter(e => e.completed).length;
+
         setStreak(currentStreak);
+        setLongestStreak(longest);
+        setTotalCompleted(completed);
+
         if (currentStreak > 0) {
             setMessage(motivationalMessages[currentStreak % motivationalMessages.length]);
+        } else {
+            setMessage("Complete a task to start a new streak!");
         }
-    }, []);
+    }, [events]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 sm:p-6 lg:p-8">
@@ -97,12 +122,12 @@ export default function StreaksPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
                             <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
                                 <Award className="h-10 w-10 text-yellow-500 mb-2" />
-                                <p className="text-2xl font-semibold">15</p>
+                                <p className="text-2xl font-semibold">{totalCompleted}</p>
                                 <p className="text-muted-foreground">Total Tasks Completed</p>
                             </div>
                             <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
                                 <CheckCircle className="h-10 w-10 text-green-500 mb-2" />
-                                <p className="text-2xl font-semibold">5</p>
+                                <p className="text-2xl font-semibold">{longestStreak}</p>
                                 <p className="text-muted-foreground">Longest Streak</p>
                             </div>
                         </div>
@@ -113,8 +138,8 @@ export default function StreaksPage() {
                                 {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
                                     <div key={index} className="flex flex-col items-center gap-2">
                                         <span className="text-sm text-muted-foreground">{day}</span>
-                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${index < streak ? 'bg-orange-400' : 'bg-muted'}`}>
-                                            {index < streak && <CheckCircle className="h-5 w-5 text-white" />}
+                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center ${index < streak % 7 ? 'bg-orange-400' : 'bg-muted'}`}>
+                                            {index < streak % 7 && <CheckCircle className="h-5 w-5 text-white" />}
                                         </div>
                                     </div>
                                 ))}
@@ -136,3 +161,5 @@ export default function StreaksPage() {
         </div>
     );
 }
+
+    
