@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Flame, Star, Award, CheckCircle, CalendarDays } from 'lucide-react';
+import { Flame, Star, Award, CheckCircle, CalendarDays, Shapes } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -87,7 +87,7 @@ export default function StreaksPage() {
                             initial={{ scale: 0 }}
                             animate={{ scale: 1, transition: { delay: 0.2, type: 'spring' } }}
                         >
-                            <Flame className="mx-auto h-24 w-24 mb-4 text-orange-300" />
+                            <Shapes className="mx-auto h-24 w-24 mb-4 text-orange-300" />
                         </motion.div>
                         <CardTitle className="text-5xl font-bold">{streak} Day Streak!</CardTitle>
                         <CardDescription className="text-primary-foreground/80 text-lg mt-2">{message}</CardDescription>
