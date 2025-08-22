@@ -167,6 +167,42 @@ const dummyEvents: Event[] = [
     end: add(startOfThisWeek, { days: 5, hours: 15, minutes: 45 }),
     category: "personal",
   },
+  // Evening Activities
+  {
+    id: "17",
+    title: "Dinner with family",
+    start: add(startOfThisWeek, { days: 1, hours: 18, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 1, hours: 19, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "18",
+    title: "Read a book",
+    start: add(startOfThisWeek, { days: 2, hours: 20, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 2, hours: 21, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "19",
+    title: "Call friends",
+    start: add(startOfThisWeek, { days: 3, hours: 19, minutes: 30 }),
+    end: add(startOfThisWeek, { days: 3, hours: 20, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "20",
+    title: "Hobby time: Painting",
+    start: add(startOfThisWeek, { days: 4, hours: 18, minutes: 30 }),
+    end: add(startOfThisWeek, { days: 4, hours: 19, minutes: 30 }),
+    category: "personal",
+  },
+  {
+    id: "21",
+    title: "Movie night",
+    start: add(startOfThisWeek, { days: 5, hours: 20, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 5, hours: 22, minutes: 0 }),
+    category: "personal",
+  },
 ];
 
 const categoryIcons: Record<Event['category'], React.ReactElement> = {
