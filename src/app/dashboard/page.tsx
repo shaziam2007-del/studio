@@ -40,6 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { EventForm } from "@/components/event-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -57,6 +58,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 1, hours: 9, minutes: 0 }),
     end: add(startOfThisWeek, { days: 1, hours: 10, minutes: 30 }),
     category: "study",
+    completed: true,
   },
   {
     id: "2",
@@ -64,6 +66,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 1, hours: 11, minutes: 0 }),
     end: add(startOfThisWeek, { days: 1, hours: 12, minutes: 30 }),
     category: "study",
+    completed: false,
   },
   {
     id: "3",
@@ -86,6 +89,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 2, hours: 8, minutes: 30 }),
     end: add(startOfThisWeek, { days: 2, hours: 10, minutes: 0 }),
     category: "study",
+    completed: true,
   },
   {
     id: "6",
@@ -100,6 +104,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 2, hours: 15, minutes: 0 }),
     end: add(startOfThisWeek, { days: 2, hours: 16, minutes: 30 }),
     category: "study",
+    completed: false,
   },
   // Wednesday
   {
@@ -115,6 +120,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 3, hours: 11, minutes: 0 }),
     end: add(startOfThisWeek, { days: 3, hours: 12, minutes: 0 }),
     category: "personal",
+    completed: true,
   },
   {
     id: "10",
@@ -137,6 +143,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 4, hours: 13, minutes: 0 }),
     end: add(startOfThisWeek, { days: 4, hours: 14, minutes: 30 }),
     category: "work",
+    completed: true,
   },
   {
     id: "13",
@@ -174,6 +181,7 @@ const dummyEvents: Event[] = [
     start: add(startOfThisWeek, { days: 1, hours: 18, minutes: 0 }),
     end: add(startOfThisWeek, { days: 1, hours: 19, minutes: 0 }),
     category: "personal",
+    completed: true,
   },
   {
     id: "18",
@@ -262,7 +270,7 @@ const categoryColors = {
   other: "bg-gray-100 border-gray-300 text-gray-800",
 };
 
-const DayTable = ({ day, events, onEventClick }: { day: Date, events: Event[], onEventClick: (event: Event) => void }) => {
+const DayTable = ({ day, events, onEventClick, onToggleComplete }: { day: Date, events: Event[], onEventClick: (event: Event) => void, onToggleComplete: (eventId: string) => void }) => {
   const dayEvents = events
     .filter((event) => isSameDay(event.start, day))
     .sort((a,b) => a.start.getTime() - b.start.getTime());
@@ -276,6 +284,7 @@ const DayTable = ({ day, events, onEventClick }: { day: Date, events: Event[], o
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">Done</TableHead>
                 <TableHead className="w-[180px]">Time</TableHead>
                 <TableHead>Event</TableHead>
                 <TableHead className="w-[120px]">Category</TableHead>
@@ -283,12 +292,19 @@ const DayTable = ({ day, events, onEventClick }: { day: Date, events: Event[], o
             </TableHeader>
             <TableBody>
               {dayEvents.map((event) => (
-                <TableRow key={event.id} onClick={() => onEventClick(event)} className="cursor-pointer">
-                  <TableCell className="font-medium">
+                <TableRow key={event.id} className={cn(event.completed && "bg-muted/50")}>
+                  <TableCell>
+                    <Checkbox
+                      checked={event.completed}
+                      onCheckedChange={() => onToggleComplete(event.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </TableCell>
+                  <TableCell className={cn("font-medium", event.completed && "line-through text-muted-foreground")} onClick={() => onEventClick(event)} >
                     {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
                   </TableCell>
-                  <TableCell>{event.title}</TableCell>
-                  <TableCell>
+                  <TableCell className={cn(event.completed && "line-through text-muted-foreground")} onClick={() => onEventClick(event)}>{event.title}</TableCell>
+                  <TableCell onClick={() => onEventClick(event)}>
                     <div className="flex items-center">
                        {categoryIcons[event.category]}
                        <span className="capitalize">{event.category}</span>
@@ -337,11 +353,11 @@ export default function DashboardPage() {
 
   const handleSaveEvent = (event: Omit<Event, "id">, id?: string) => {
     if (id) {
-      setEvents(events.map((e) => (e.id === id ? { ...event, id } : e)));
+      setEvents(events.map((e) => (e.id === id ? { ...event, id, completed: e.completed } : e)));
       toast({ title: "Event Updated!", description: "Your event has been successfully updated." });
     } else {
       const newId = (Math.random() * 1000).toString();
-      setEvents([...events, { ...event, id: newId }]);
+      setEvents([...events, { ...event, id: newId, completed: false }]);
       toast({ title: "Event Created!", description: "Your new event has been added to the schedule." });
     }
     setIsFormOpen(false);
@@ -355,6 +371,12 @@ export default function DashboardPage() {
     setSelectedEvent(null);
   };
 
+  const handleToggleComplete = (eventId: string) => {
+    setEvents(events.map(event =>
+      event.id === eventId ? { ...event, completed: !event.completed } : event
+    ));
+  };
+
   const openEventForm = (event?: Event) => {
     setSelectedEvent(event || null);
     setIsFormOpen(true);
@@ -364,6 +386,7 @@ export default function DashboardPage() {
     const handler = setInterval(() => {
       const now = new Date();
       events.forEach(event => {
+        if (event.completed) return;
         const timeDiff = event.start.getTime() - now.getTime();
         if (timeDiff > 0 && timeDiff <= 5 * 60 * 1000 && timeDiff > 4 * 60 * 1000) {
           toast({
@@ -446,8 +469,9 @@ export default function DashboardPage() {
                     <button
                       key={event.id}
                       onClick={() => openEventForm(event)}
-                      className={cn("w-full text-left p-1 rounded-md text-xs mb-1 truncate", categoryColors[event.category])}
+                      className={cn("w-full text-left p-1 rounded-md text-xs mb-1 truncate", categoryColors[event.category], event.completed && "opacity-50 line-through")}
                     >
+                      <Checkbox checked={!!event.completed} className="mr-2" onClick={(e) => {e.stopPropagation(); handleToggleComplete(event.id)}}/>
                       {format(event.start, "ha")} {event.title}
                     </button>
                   ))}
@@ -460,7 +484,7 @@ export default function DashboardPage() {
       
       {view === 'day' && (
         <ScrollArea className="flex-1">
-            <DayTable day={currentDate} events={events} onEventClick={openEventForm}/>
+            <DayTable day={currentDate} events={events} onEventClick={openEventForm} onToggleComplete={handleToggleComplete} />
         </ScrollArea>
       )}
 
@@ -468,7 +492,7 @@ export default function DashboardPage() {
         <ScrollArea className="flex-1">
            <div className="space-y-6">
              {weekDays.map(day => (
-                <DayTable key={day.toString()} day={day} events={events} onEventClick={openEventForm}/>
+                <DayTable key={day.toString()} day={day} events={events} onEventClick={openEventForm} onToggleComplete={handleToggleComplete} />
              ))}
            </div>
         </ScrollArea>

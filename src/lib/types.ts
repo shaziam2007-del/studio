@@ -4,6 +4,7 @@ export type Event = {
   start: Date;
   end: Date;
   category: "work" | "personal" | "study" | "other";
+  completed?: boolean;
 };
 
 export type View = "day" | "week" | "month";
