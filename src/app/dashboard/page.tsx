@@ -15,6 +15,7 @@ import {
   startOfToday,
   startOfWeek,
   startOfMonth,
+  setDate,
 } from "date-fns";
 import {
   ChevronLeft,
@@ -42,41 +43,126 @@ import { EventForm } from "@/components/event-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+const today = startOfToday();
+const startOfThisWeek = startOfWeek(today);
+
 const dummyEvents: Event[] = [
+  // Monday
   {
     id: "1",
-    title: "Project Alpha Kick-off",
-    start: add(startOfToday(), { days: 0, hours: 9 }),
-    end: add(startOfToday(), { days: 0, hours: 10, minutes: 30 }),
-    category: "work",
-  },
-  {
-    id: "2",
-    title: "Team Lunch",
-    start: add(startOfToday(), { days: 0, hours: 12 }),
-    end: add(startOfToday(), { days: 0, hours: 13 }),
-    category: "personal",
-  },
-  {
-    id: "3",
-    title: "React Workshop",
-    start: add(startOfToday(), { days: 1, hours: 14 }),
-    end: add(startOfToday(), { days: 1, hours: 17 }),
+    title: "Calculus II",
+    start: add(startOfThisWeek, { days: 1, hours: 9, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 1, hours: 10, minutes: 30 }),
     category: "study",
   },
   {
+    id: "2",
+    title: "Physics Lab",
+    start: add(startOfThisWeek, { days: 1, hours: 11, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 1, hours: 12, minutes: 30 }),
+    category: "study",
+  },
+  {
+    id: "3",
+    title: "Lunch with Mentor",
+    start: add(startOfThisWeek, { days: 1, hours: 13, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 1, hours: 14, minutes: 0 }),
+    category: "personal",
+  },
+  {
     id: "4",
-    title: "Design Review",
-    start: add(startOfToday(), { days: -1, hours: 11 }),
-    end: add(startOfToday(), { days: -1, hours: 12, minutes: 30 }),
+    title: "English Literature Seminar",
+    start: add(startOfThisWeek, { days: 1, hours: 14, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 1, hours: 15, minutes: 30 }),
+    category: "study",
+  },
+  // Tuesday
+  {
+    id: "5",
+    title: "Computer Science Lecture",
+    start: add(startOfThisWeek, { days: 2, hours: 8, minutes: 30 }),
+    end: add(startOfThisWeek, { days: 2, hours: 10, minutes: 0 }),
+    category: "study",
+  },
+  {
+    id: "6",
+    title: "Part-time Job",
+    start: add(startOfThisWeek, { days: 2, hours: 13, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 2, hours: 15, minutes: 0 }),
     category: "work",
   },
-   {
-    id: "5",
-    title: "Morning Standup",
-    start: add(startOfToday(), { days: 1, hours: 9, minutes: 30 }),
-    end: add(startOfToday(), { days: 1, hours: 10 }),
+  {
+    id: "7",
+    title: "History of Arts",
+    start: add(startOfThisWeek, { days: 2, hours: 15, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 2, hours: 16, minutes: 30 }),
+    category: "study",
+  },
+  // Wednesday
+  {
+    id: "8",
+    title: "Calculus II Tutorial",
+    start: add(startOfThisWeek, { days: 3, hours: 9, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 3, hours: 10, minutes: 30 }),
+    category: "study",
+  },
+  {
+    id: "9",
+    title: "Gym Session",
+    start: add(startOfThisWeek, { days: 3, hours: 11, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 3, hours: 12, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "10",
+    title: "Chemistry Lab",
+    start: add(startOfThisWeek, { days: 3, hours: 14, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 3, hours: 16, minutes: 45 }),
+    category: "study",
+  },
+  // Thursday
+  {
+    id: "11",
+    title: "Computer Science Lab",
+    start: add(startOfThisWeek, { days: 4, hours: 10, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 4, hours: 11, minutes: 30 }),
+    category: "study",
+  },
+  {
+    id: "12",
+    title: "Group Project Meeting",
+    start: add(startOfThisWeek, { days: 4, hours: 13, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 4, hours: 14, minutes: 30 }),
     category: "work",
+  },
+  {
+    id: "13",
+    title: "Economics Lecture",
+    start: add(startOfThisWeek, { days: 4, hours: 15, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 4, hours: 16, minutes: 30 }),
+    category: "study",
+  },
+  // Friday
+  {
+    id: "14",
+    title: "Final Project Presentation Prep",
+    start: add(startOfThisWeek, { days: 5, hours: 9, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 5, hours: 10, minutes: 30 }),
+    category: "work",
+  },
+  {
+    id: "15",
+    title: "Foreign Language Class",
+    start: add(startOfThisWeek, { days: 5, hours: 11, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 5, hours: 12, minutes: 30 }),
+    category: "study",
+  },
+  {
+    id: "16",
+    title: "Career Services Workshop",
+    start: add(startOfThisWeek, { days: 5, hours: 14, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 5, hours: 15, minutes: 45 }),
+    category: "personal",
   },
 ];
 
@@ -96,7 +182,6 @@ const categoryColors = {
 
 export default function DashboardPage() {
   const { toast } = useToast();
-  const today = startOfToday();
   const [currentDate, setCurrentDate] = React.useState(today);
   const [view, setView] = React.useState<View>("week");
   const [events, setEvents] = React.useState<Event[]>(dummyEvents);
@@ -336,3 +421,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
