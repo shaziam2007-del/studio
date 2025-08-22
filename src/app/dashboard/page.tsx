@@ -28,6 +28,7 @@ import {
   MoreHorizontal,
   Clock,
   CalendarCheck,
+  Flame,
 } from "lucide-react";
 
 import type { Event, View } from "@/lib/types";
@@ -48,6 +49,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const today = startOfToday();
 const startOfThisWeek = startOfWeek(today);
@@ -542,6 +544,11 @@ export default function DashboardPage() {
           </h2>
         </div>
         <div className="flex items-center gap-4">
+           <Link href="/streaks">
+            <Button variant="outline" className="shadow-md">
+                <Flame className="mr-2 h-4 w-4" /> Streaks
+            </Button>
+          </Link>
           <Tabs value={view} onValueChange={(v) => setView(v as View)}>
             <TabsList>
               <TabsTrigger value="day">Day</TabsTrigger>
