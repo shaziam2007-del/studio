@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Event } from '@/lib/types';
 import { isSameDay, subDays, startOfToday } from 'date-fns';
+import { Toaster } from '@/components/ui/toaster';
 
 // We'll reuse the dummy data logic for consistency, but in a real app, this would come from a data store.
 const today = startOfToday();
@@ -131,6 +132,7 @@ export default function StreaksPage() {
                     </CardContent>
                 </Card>
             </motion.div>
+            <Toaster />
         </div>
     );
 }

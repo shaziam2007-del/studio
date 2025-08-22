@@ -17,6 +17,7 @@ import { CalendarCheck, Loader2 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -119,6 +120,7 @@ export default function LoginPage() {
           </div>
         </Card>
       </div>
+      <Toaster />
     </div>
   );
 }

@@ -51,6 +51,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Toaster } from "@/components/ui/toaster";
 
 const today = startOfToday();
 const startOfThisWeek = startOfWeek(today);
@@ -642,6 +643,7 @@ export default function DashboardPage() {
           />
         </DialogContent>
       </Dialog>
+      <Toaster />
     </div>
   );
 }
