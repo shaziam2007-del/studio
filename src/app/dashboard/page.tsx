@@ -42,6 +42,7 @@ import { useToast } from "@/hooks/use-toast";
 import { EventForm } from "@/components/event-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const today = startOfToday();
 const startOfThisWeek = startOfWeek(today);
@@ -336,11 +337,13 @@ export default function DashboardPage() {
       )}
 
       {(view === 'week' || view === 'day') && (
-        <div className="flex-1 grid grid-cols-1 grid-rows-1 rounded-lg border overflow-hidden shadow-lg bg-white">
-          <div className="grid grid-cols-[auto_1fr] flex-1">
-            {/* Corner */}
-            <div className="border-b border-r"></div>
-            <div className="grid grid-cols-7 border-b">
+        <ScrollArea className="flex-1 rounded-lg border shadow-lg bg-white">
+          <div className="grid grid-cols-[auto_1fr]">
+            {/* Header */}
+            <div className="sticky top-0 z-20 bg-white">
+              <div className="h-16 border-b border-r"></div>
+            </div>
+            <div className="sticky top-0 z-20 bg-white grid grid-cols-7 border-b">
               {(view === 'week' ? weekDays : [currentDate]).map(day => (
                 <div key={day.toString()} className="p-2 text-center border-r">
                    <p className="text-sm text-gray-500">{format(day, "EEE")}</p>
@@ -360,6 +363,7 @@ export default function DashboardPage() {
             
             {/* Events grid */}
             <div className="col-start-2 row-start-2 grid grid-cols-7 relative">
+                {/* Grid lines */}
                 {timeSlots.map((_, index) => (
                   <React.Fragment key={index}>
                     {Array.from({length: view === 'week' ? 7 : 1}).map((__, dayIndex) => (
@@ -400,7 +404,7 @@ export default function DashboardPage() {
                 })}
             </div>
           </div>
-        </div>
+        </ScrollArea>
       )}
 
 
@@ -421,5 +425,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
