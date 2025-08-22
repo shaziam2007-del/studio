@@ -203,6 +203,49 @@ const dummyEvents: Event[] = [
     end: add(startOfThisWeek, { days: 5, hours: 22, minutes: 0 }),
     category: "personal",
   },
+  // Ideal Student Routine
+  {
+    id: "22",
+    title: "Review today's notes",
+    start: add(startOfThisWeek, { days: 1, hours: 17, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 1, hours: 18, minutes: 0 }),
+    category: "study",
+  },
+  {
+    id: "23",
+    title: "Assignment Work",
+    start: add(startOfThisWeek, { days: 2, hours: 17, minutes: 30 }),
+    end: add(startOfThisWeek, { days: 2, hours: 19, minutes: 0 }),
+    category: "work",
+  },
+  {
+    id: "24",
+    title: "Dinner",
+    start: add(startOfThisWeek, { days: 2, hours: 19, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 2, hours: 19, minutes: 45 }),
+    category: "personal",
+  },
+  {
+    id: "25",
+    title: "Evening Study Session",
+    start: add(startOfThisWeek, { days: 3, hours: 18, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 3, hours: 19, minutes: 30 }),
+    category: "study",
+  },
+  {
+    id: "26",
+    title: "Pack for tomorrow",
+    start: add(startOfThisWeek, { days: 4, hours: 21, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 4, hours: 21, minutes: 30 }),
+    category: "personal",
+  },
+  {
+    id: "27",
+    title: "Weekend Planning",
+    start: add(startOfThisWeek, { days: 5, hours: 17, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 5, hours: 17, minutes: 30 }),
+    category: "personal",
+  },
 ];
 
 const categoryIcons: Record<Event['category'], React.ReactElement> = {
