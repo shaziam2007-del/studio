@@ -30,6 +30,7 @@ import {
   CalendarCheck,
   Flame,
 } from "lucide-react";
+import Image from "next/image";
 
 import type { Event, View } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -376,7 +377,7 @@ const WelcomeScreen = ({ onFinish }: { onFinish: () => void }) => {
         transition={{ type: "spring", damping: 15, stiffness: 100, duration: 0.5 }}
         className="flex flex-col items-center gap-4"
       >
-        <CalendarCheck className="h-24 w-24 text-primary" />
+        <Image src="https://placehold.co/150x150.png" alt="TimeForge Logo" width={150} height={150} className="rounded-full" data-ai-hint="logo" />
         <h1 className="text-5xl font-bold font-headline">Welcome to TimeForge</h1>
         <p className="text-xl text-muted-foreground">Crafting your perfect schedule...</p>
       </motion.div>
