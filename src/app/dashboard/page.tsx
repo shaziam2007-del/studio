@@ -51,6 +51,49 @@ const today = startOfToday();
 const startOfThisWeek = startOfWeek(today);
 
 const dummyEvents: Event[] = [
+  // Sunday (Healthy Routine)
+  {
+    id: "34",
+    title: "Wake up & Meditate",
+    start: add(startOfThisWeek, { days: 0, hours: 8, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 0, hours: 8, minutes: 30 }),
+    category: "personal",
+  },
+  {
+    id: "35",
+    title: "Brunch with Family",
+    start: add(startOfThisWeek, { days: 0, hours: 11, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 0, hours: 12, minutes: 30 }),
+    category: "personal",
+  },
+  {
+    id: "36",
+    title: "Weekly Review & Plan",
+    start: add(startOfThisWeek, { days: 0, hours: 14, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 0, hours: 15, minutes: 30 }),
+    category: "work",
+  },
+  {
+    id: "37",
+    title: "Go for a walk outdoors",
+    start: add(startOfThisWeek, { days: 0, hours: 16, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 0, hours: 17, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "38",
+    title: "Prepare for Monday",
+    start: add(startOfThisWeek, { days: 0, hours: 18, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 0, hours: 19, minutes: 0 }),
+    category: "work",
+  },
+  {
+    id: "39",
+    title: "Read and Relax",
+    start: add(startOfThisWeek, { days: 0, hours: 21, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 0, hours: 22, minutes: 0 }),
+    category: "personal",
+  },
   // Monday
   {
     id: "1",
@@ -252,6 +295,49 @@ const dummyEvents: Event[] = [
     title: "Weekend Planning",
     start: add(startOfThisWeek, { days: 5, hours: 17, minutes: 0 }),
     end: add(startOfThisWeek, { days: 5, hours: 17, minutes: 30 }),
+    category: "personal",
+  },
+  // Saturday (Healthy Routine)
+  {
+    id: "28",
+    title: "Morning Workout",
+    start: add(startOfThisWeek, { days: 6, hours: 9, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 6, hours: 10, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "29",
+    title: "Study Session",
+    start: add(startOfThisWeek, { days: 6, hours: 10, minutes: 30 }),
+    end: add(startOfThisWeek, { days: 6, hours: 12, minutes: 30 }),
+    category: "study",
+  },
+  {
+    id: "30",
+    title: "Lunch",
+    start: add(startOfThisWeek, { days: 6, hours: 13, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 6, hours: 14, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "31",
+    title: "Hobby Time",
+    start: add(startOfThisWeek, { days: 6, hours: 15, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 6, hours: 17, minutes: 0 }),
+    category: "personal",
+  },
+  {
+    id: "32",
+    title: "Dinner with Friends",
+    start: add(startOfThisWeek, { days: 6, hours: 19, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 6, hours: 20, minutes: 30 }),
+    category: "personal",
+  },
+  {
+    id: "33",
+    title: "Relax",
+    start: add(startOfThisWeek, { days: 6, hours: 21, minutes: 0 }),
+    end: add(startOfThisWeek, { days: 6, hours: 22, minutes: 0 }),
     category: "personal",
   },
 ];
