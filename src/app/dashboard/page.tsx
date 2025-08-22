@@ -33,11 +33,13 @@ import type { Event, View } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { EventForm } from "@/components/event-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -167,7 +169,7 @@ const dummyEvents: Event[] = [
   },
 ];
 
-const categoryIcons = {
+const categoryIcons: Record<Event['category'], React.ReactElement> = {
   work: <Briefcase className="mr-2 h-4 w-4" />,
   personal: <User className="mr-2 h-4 w-4" />,
   study: <BookOpen className="mr-2 h-4 w-4" />,
@@ -180,6 +182,49 @@ const categoryColors = {
   study: "bg-purple-100 border-purple-300 text-purple-800",
   other: "bg-gray-100 border-gray-300 text-gray-800",
 };
+
+const DayTable = ({ day, events, onEventClick }: { day: Date, events: Event[], onEventClick: (event: Event) => void }) => {
+  const dayEvents = events
+    .filter((event) => isSameDay(event.start, day))
+    .sort((a,b) => a.start.getTime() - b.start.getTime());
+
+  return (
+    <div className="rounded-lg border shadow-md bg-white overflow-hidden">
+      <div className={cn("p-4 text-lg font-semibold", isToday(day) && "text-primary")}>
+        {format(day, "EEEE, MMMM d")}
+      </div>
+       {dayEvents.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[180px]">Time</TableHead>
+                <TableHead>Event</TableHead>
+                <TableHead className="w-[120px]">Category</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {dayEvents.map((event) => (
+                <TableRow key={event.id} onClick={() => onEventClick(event)} className="cursor-pointer">
+                  <TableCell className="font-medium">
+                    {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
+                  </TableCell>
+                  <TableCell>{event.title}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                       {categoryIcons[event.category]}
+                       <span className="capitalize">{event.category}</span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+       ) : (
+         <p className="p-4 text-muted-foreground">No events scheduled for this day.</p>
+       )}
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const { toast } = useToast();
@@ -200,8 +245,6 @@ export default function DashboardPage() {
     start: startOfWeek(currentDate),
     end: endOfWeek(currentDate),
   });
-
-  const timeSlots = Array.from({ length: 24 }, (_, i) => `${i}:00`);
 
   const prev = () => {
     const newDate = add(currentDate, { [view === 'month' ? 'months' : view === 'week' ? 'weeks' : 'days']: -1 });
@@ -335,75 +378,20 @@ export default function DashboardPage() {
         </div>
       </div>
       )}
+      
+      {view === 'day' && (
+        <ScrollArea className="flex-1">
+            <DayTable day={currentDate} events={events} onEventClick={openEventForm}/>
+        </ScrollArea>
+      )}
 
-      {(view === 'week' || view === 'day') && (
-        <ScrollArea className="flex-1 rounded-lg border shadow-lg bg-white">
-          <div className="grid grid-cols-[auto_1fr]">
-            {/* Header */}
-            <div className="sticky top-0 z-20 bg-white">
-              <div className="h-16 border-b border-r"></div>
-            </div>
-            <div className="sticky top-0 z-20 bg-white grid grid-cols-7 border-b">
-              {(view === 'week' ? weekDays : [currentDate]).map(day => (
-                <div key={day.toString()} className="p-2 text-center border-r">
-                   <p className="text-sm text-gray-500">{format(day, "EEE")}</p>
-                   <p className={cn("text-2xl font-semibold", isToday(day) && "text-primary")}>{format(day, "d")}</p>
-                </div>
-              ))}
-            </div>
-
-             {/* Time column */}
-            <div className="row-span-full">
-                {timeSlots.map(time => (
-                    <div key={time} className="h-24 text-right pr-2 pt-1 text-sm text-gray-500 border-r relative">
-                       <span className="relative -top-3">{time}</span>
-                    </div>
-                ))}
-            </div>
-            
-            {/* Events grid */}
-            <div className="col-start-2 row-start-2 grid grid-cols-7 relative">
-                {/* Grid lines */}
-                {timeSlots.map((_, index) => (
-                  <React.Fragment key={index}>
-                    {Array.from({length: view === 'week' ? 7 : 1}).map((__, dayIndex) => (
-                       <div key={dayIndex} className="h-24 border-b border-r"></div>
-                    ))}
-                  </React.Fragment>
-                ))}
-
-                {/* Render events */}
-                {events.filter(event => (view === 'week' ? weekDays : [currentDate]).some(d => isSameDay(d, event.start))).map(event => {
-                  const startHour = event.start.getHours();
-                  const startMinutes = event.start.getMinutes();
-                  const endHour = event.end.getHours();
-                  const endMinutes = event.end.getMinutes();
-                  
-                  const top = (startHour + startMinutes / 60) * 96; // 24h * 4rem/h = 96rem
-                  const height = ((endHour + endMinutes/60) - (startHour + startMinutes/60)) * 96;
-                  
-                  const dayIndex = view === 'week' ? getDay(event.start) : 0;
-                  const daySpan = view === 'week' ? 7 : 1;
-                  
-                  return (
-                    <button 
-                      key={event.id}
-                      onClick={() => openEventForm(event)}
-                      style={{
-                        top: `${top}px`,
-                        height: `${height}px`,
-                        left: `${(dayIndex / daySpan) * 100}%`,
-                        width: `${(1 / daySpan) * 100}%`,
-                      }}
-                      className={cn("absolute p-2 text-left text-xs rounded-lg z-10 overflow-hidden flex flex-col transition-all duration-200 ease-in-out hover:shadow-lg hover:scale-[1.02]", categoryColors[event.category])}
-                      >
-                       <p className="font-bold">{event.title}</p>
-                       <p>{format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}</p>
-                    </button>
-                  )
-                })}
-            </div>
-          </div>
+      {view === 'week' && (
+        <ScrollArea className="flex-1">
+           <div className="space-y-6">
+             {weekDays.map(day => (
+                <DayTable key={day.toString()} day={day} events={events} onEventClick={openEventForm}/>
+             ))}
+           </div>
         </ScrollArea>
       )}
 
