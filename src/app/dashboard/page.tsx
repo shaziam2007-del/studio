@@ -27,6 +27,7 @@ import {
   BookOpen,
   MoreHorizontal,
   Clock,
+  CalendarCheck,
 } from "lucide-react";
 
 import type { Event, View } from "@/lib/types";
@@ -46,6 +47,7 @@ import { EventForm } from "@/components/event-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion } from "framer-motion";
 
 const today = startOfToday();
 const startOfThisWeek = startOfWeek(today);
@@ -356,6 +358,30 @@ const categoryColors = {
   other: "bg-gray-100 border-gray-300 text-gray-800",
 };
 
+const WelcomeScreen = ({ onFinish }: { onFinish: () => void }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.5 } }}
+      transition={{ duration: 0.5, delay: 2.5 }}
+      onAnimationComplete={onFinish}
+      className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-background"
+    >
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", damping: 15, stiffness: 100, duration: 0.5 }}
+        className="flex flex-col items-center gap-4"
+      >
+        <CalendarCheck className="h-24 w-24 text-primary" />
+        <h1 className="text-5xl font-bold font-headline">Welcome to TimeForge</h1>
+        <p className="text-xl text-muted-foreground">Crafting your perfect schedule...</p>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const DayTable = ({ day, events, onEventClick, onToggleComplete }: { day: Date, events: Event[], onEventClick: (event: Event) => void, onToggleComplete: (eventId: string) => void }) => {
   const dayEvents = events
     .filter((event) => isSameDay(event.start, day))
@@ -409,6 +435,7 @@ const DayTable = ({ day, events, onEventClick, onToggleComplete }: { day: Date, 
 
 export default function DashboardPage() {
   const { toast } = useToast();
+  const [showWelcome, setShowWelcome] = React.useState(true);
   const [currentDate, setCurrentDate] = React.useState(today);
   const [view, setView] = React.useState<View>("week");
   const [events, setEvents] = React.useState<Event[]>(dummyEvents);
@@ -461,6 +488,10 @@ export default function DashboardPage() {
     setEvents(events.map(event =>
       event.id === eventId ? { ...event, completed: !event.completed } : event
     ));
+    const event = events.find(e => e.id === eventId);
+    if (event && !event.completed) {
+      toast({ title: "Task Complete!", description: `Great job on finishing "${event.title}"!` });
+    }
   };
 
   const openEventForm = (event?: Event) => {
@@ -488,6 +519,10 @@ export default function DashboardPage() {
   }, [events, toast]);
 
 
+  if (showWelcome) {
+    return <WelcomeScreen onFinish={() => setShowWelcome(false)} />;
+  }
+  
   return (
     <div className="flex h-screen w-full flex-col p-4 sm:p-6 lg:p-8 bg-background">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
