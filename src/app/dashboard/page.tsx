@@ -29,8 +29,13 @@ import {
   Clock,
   CalendarCheck,
   Flame,
+  LogOut,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
 
 import type { Event, View } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -147,6 +152,7 @@ const DayTable = ({ day, events, onEventClick, onToggleComplete }: { day: Date, 
 
 export default function DashboardPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [showWelcome, setShowWelcome] = React.useState(true);
   const [currentDate, setCurrentDate] = React.useState(today);
   const [view, setView] = React.useState<View>("week");
@@ -211,6 +217,17 @@ export default function DashboardPage() {
     setIsFormOpen(true);
   };
   
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push('/');
+      toast({ title: "Logged Out", description: "You have been successfully logged out." });
+    } catch (error) {
+      console.error("Logout Error: ", error);
+      toast({ title: "Logout Failed", description: "Something went wrong.", variant: "destructive" });
+    }
+  };
+
   React.useEffect(() => {
     const handler = setInterval(() => {
       const now = new Date();
@@ -268,6 +285,9 @@ export default function DashboardPage() {
           </Tabs>
           <Button onClick={() => openEventForm()} className="shadow-md">
             <Plus className="mr-2 h-4 w-4" /> New Event
+          </Button>
+          <Button variant="outline" onClick={handleLogout} className="shadow-md">
+            <LogOut className="mr-2 h-4 w-4" /> Logout
           </Button>
         </div>
       </header>
