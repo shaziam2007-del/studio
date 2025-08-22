@@ -355,7 +355,7 @@ const categoryIcons: Record<Event['category'], React.ReactElement> = {
 };
 
 const categoryColors = {
-  work: "bg-blue-100 border-blue-300 text-blue-800",
+  work: "bg-red-100 border-red-300 text-red-800",
   personal: "bg-green-100 border-green-300 text-green-800",
   study: "bg-purple-100 border-purple-300 text-purple-800",
   other: "bg-gray-100 border-gray-300 text-gray-800",
@@ -391,7 +391,7 @@ const DayTable = ({ day, events, onEventClick, onToggleComplete }: { day: Date, 
     .sort((a,b) => a.start.getTime() - b.start.getTime());
 
   return (
-    <div className="rounded-lg border shadow-md bg-white overflow-hidden">
+    <div className="rounded-lg border shadow-md bg-card overflow-hidden">
       <div className={cn("p-4 text-lg font-semibold", isToday(day) && "text-primary")}>
         {format(day, "EEEE, MMMM d")}
       </div>
@@ -530,8 +530,8 @@ export default function DashboardPage() {
     <div className="flex h-screen w-full flex-col p-4 sm:p-6 lg:p-8 bg-background">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold text-gray-800 font-headline">TimeForge</h1>
-          <div className="flex items-center gap-2 rounded-md border p-1">
+          <h1 className="text-2xl font-bold text-foreground font-headline">TimeForge</h1>
+          <div className="flex items-center gap-2 rounded-md border bg-card p-1">
             <Button variant="ghost" size="icon" onClick={prev}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -540,7 +540,7 @@ export default function DashboardPage() {
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <h2 className="text-xl font-semibold text-gray-600">
+          <h2 className="text-xl font-semibold text-muted-foreground">
             {format(currentDate, view === 'month' ? 'MMMM yyyy' : view === 'week' ? 'MMMM yyyy' : 'do MMMM yyyy')}
           </h2>
         </div>
@@ -564,10 +564,10 @@ export default function DashboardPage() {
       </header>
 
       {view === 'month' && (
-      <div className="flex-1 grid grid-cols-7 grid-rows-1 rounded-lg border overflow-hidden shadow-lg bg-white">
+      <div className="flex-1 grid grid-cols-7 grid-rows-1 rounded-lg border overflow-hidden shadow-lg bg-card">
         <div className="grid grid-cols-7 col-span-7">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <div key={day} className="py-2 text-center font-semibold text-gray-600 border-b border-r">
+            <div key={day} className="py-2 text-center font-semibold text-muted-foreground border-b border-r">
               {day}
             </div>
           ))}
@@ -578,7 +578,7 @@ export default function DashboardPage() {
               key={day.toString()}
               className={cn(
                 "p-2 border-r border-b relative flex flex-col",
-                !isSameMonth(day, firstDayOfCurrentMonth) && "text-gray-400 bg-gray-50"
+                !isSameMonth(day, firstDayOfCurrentMonth) && "text-muted-foreground bg-muted/50"
               )}
             >
               <time
